@@ -25,11 +25,6 @@ public class Outbreak {
         return tested;
     }
 
-    /**
-     * The number of links on the longest chain of infections, that is the longest path in the tree (counted in links).
-     * A path goes up from one person and down to another; for every person you need the two longest ways down.
-     * Example: a line 0-1-2-3 has chain 3; a star with centre 0 and leaves 1, 2, 3 has chain 2.
-     */
     private static void cover(int v, int parent, int[][] nb, int[] cost, long[][] dp) {
         dp[v][1] = cost[v];
         for (int child : nb[v]) {
@@ -63,6 +58,11 @@ public class Outbreak {
         return first;
     }
 
+    /**
+     * The number of links on the longest chain of infections, that is the longest path in the tree (counted in links).
+     * A path goes up from one person and down to another; for every person you need the two longest ways down.
+     * Example: a line 0-1-2-3 has chain 3; a star with centre 0 and leaves 1, 2, 3 has chain 2.
+     */
     public static int longestChain(int n, int[][] nb) {
         if (n == 0) return 0;
         int[] best = {0};

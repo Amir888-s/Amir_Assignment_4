@@ -58,12 +58,6 @@ public class Marker {
      * can have the same hash.
      * Example: a = "ACGTAC", b = "TTACGT", k = 4: the words of a are ACGT, CGTA, GTAC; only ACGT is in b, so the answer is 1.
      */
-    private static long slide(long hash, char outgoing, char incoming,
-                              long power, long base, long mod) {
-        long remainder = (hash - outgoing * power % mod + mod) % mod;
-        return (remainder * base + incoming) % mod;
-    }
-
     public static int sharedWords(String a, String b, int k) {
         if (k <= 0) throw new IllegalArgumentException("Window length must be positive");
         if (a.length() < k || b.length() < k) return 0;
@@ -94,4 +88,10 @@ public class Marker {
         }
         return count;
     }
+    private static long slide(long hash, char outgoing, char incoming,
+                              long power, long base, long mod) {
+        long remainder = (hash - outgoing * power % mod + mod) % mod;
+        return (remainder * base + incoming) % mod;
+    }
+
 }

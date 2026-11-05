@@ -58,8 +58,40 @@ public class Marker {
      * can have the same hash.
      * Example: a = "ACGTAC", b = "TTACGT", k = 4: the words of a are ACGT, CGTA, GTAC; only ACGT is in b, so the answer is 1.
      */
+    private static long slide(long hash, char outgoing, char incoming,
+                              long power, long base, long mod) {
+        long remainder = (hash - outgoing * power % mod + mod) % mod;
+        return (remainder * base + incoming) % mod;
+    }
+
     public static int sharedWords(String a, String b, int k) {
-        // TODO Mission 4
-        return -1;
+        if (k <= 0) throw new IllegalArgumentException("Window length must be positive");
+        if (a.length() < k || b.length() < k) return 0;
+        final long base = 257, mod = 1_000_000_007;
+        long power = 1;
+        for (int i = 1; i < k; i++) power = power * base % mod;
+        Map<Long, List<Integer>> windows = new HashMap<>();
+        long hash = 0;
+        for (int i = 0; i < k; i++) hash = (hash * base + b.charAt(i)) % mod;
+        for (int start = 0; start + k <= b.length(); start++) {
+            if (start > 0) hash = slide(hash, b.charAt(start - 1),
+                    b.charAt(start + k - 1), power, base, mod);
+            windows.computeIfAbsent(hash, ignored -> new ArrayList<>()).add(start);
+        }
+        hash = 0;
+        for (int i = 0; i < k; i++) hash = (hash * base + a.charAt(i)) % mod;
+        int count = 0;
+        for (int start = 0; start + k <= a.length(); start++) {
+            if (start > 0) hash = slide(hash, a.charAt(start - 1),
+                    a.charAt(start + k - 1), power, base, mod);
+            List<Integer> candidates = windows.get(hash);
+            if (candidates == null) continue;
+            for (int other : candidates) {
+                int j = 0;
+                while (j < k && a.charAt(start + j) == b.charAt(other + j)) j++;
+                if (j == k) { count++; break; }
+            }
+        }
+        return count;
     }
 }
